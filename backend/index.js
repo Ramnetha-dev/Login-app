@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Allow common local frontend origins (3000/3001/5173) plus explicitly configured origin.
+// Allow common local frontend origins (any localhost/127.0.0.1 port) plus configured origins.
 const allowedOrigins = new Set([
   'http://localhost:3000',
   'http://localhost:3001',
@@ -18,11 +18,20 @@ if (process.env.CLIENT_ORIGIN) {
   allowedOrigins.add(process.env.CLIENT_ORIGIN);
 }
 
+if (process.env.CLIENT_ORIGINS) {
+  process.env.CLIENT_ORIGINS.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+    .forEach((origin) => allowedOrigins.add(origin));
+}
+
+const localhostPattern = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
+
 app.use(
   cors({
     origin(origin, callback) {
       // allow non-browser tools and same-machine development origins
-      if (!origin || allowedOrigins.has(origin)) {
+      if (!origin || allowedOrigins.has(origin) || localhostPattern.test(origin)) {
         callback(null, true);
         return;
       }
