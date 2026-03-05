@@ -1,0 +1,10 @@
+{
+  "name": "login-app-root",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Root scripts for Render deployment",
+  "scripts": {
+    "postinstall": "npm --prefix backend install",
+    "start": "npm --prefix backend start"
+  }
+}
