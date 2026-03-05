@@ -93,6 +93,11 @@ app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Login API running on http://localhost:${PORT}`);
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Login API running on port ${PORT}`);
+});
+
+server.on('error', (error) => {
+  console.error('Server failed to start:', error);
+  process.exit(1);
 });
